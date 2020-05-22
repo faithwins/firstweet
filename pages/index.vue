@@ -8,6 +8,9 @@
         <span>@</span>
         <input type="text" name="handle" v-model="handle" placeholder="Start typing handle" />
       </div>
+      <div class="warning">
+        <em>*under construction*</em>
+      </div>
     </div>
   </div>
 </template>
@@ -82,5 +85,10 @@ export default {
   border-right: thin solid #1da1f2;
   border-bottom: thin solid #1da1f2;
   outline: none;
+}
+.warning {
+  color: coral;
+  text-align: center;
+  padding-top: 10px;
 }
 </style>
