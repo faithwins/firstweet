@@ -48,7 +48,7 @@ export default {
    ** See https://axios.nuxtjs.org/options
    */
   axios: {
-
+    baseURL: process.env.NODE_ENV !== 'production' ? 'http://localhost:7071' : 'https://agreeable-island-0cfa80c0f.azurestaticapps.net'
   },
   /*
    ** Build configuration

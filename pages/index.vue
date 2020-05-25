@@ -29,9 +29,12 @@
       <transition name="slide-fade">
         <tweet v-show="tweet != ''" :id="tweet" :key="key"></tweet>
       </transition>
-      <div class="warning">
-        <em>*under construction*</em>
+      <div v-if="loading">
+        <span>loading...</span>
       </div>
+      <!--<div class="warning">
+        <em>*under construction*</em>
+      </div>-->
     </div>
   </div>
 </template>
@@ -53,12 +56,14 @@ export default {
       tweeps: [],
       tweet: "",
       key: 0,
+      loading: false,
       placeholder: "Put in handle here and hit Enter",
       source: this.$axios.CancelToken.source()
     };
   },
   methods: {
     async search() {
+      this.loading = true;
       this.tweet = "";
       let apiUrl = `/api/tweeps?q=${this.handle}`;
       this.source = this.$axios.CancelToken.source();
@@ -73,6 +78,7 @@ export default {
             console.log(e);
           }
         });
+      this.loading = false;
       this.tweeps = data
         .filter(u => {
           return (
