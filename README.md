@@ -1,6 +1,6 @@
-# firstweet
+# lastweet
 
-> Find the first tweet by handle
+> Find the most recent tweet by handle
 
 ## Build Setup
 
