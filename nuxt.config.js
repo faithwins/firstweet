@@ -54,7 +54,5 @@ export default {
      */
     extend(config, ctx) {}
   },
-  env: {
-    Base_URL_Twitter: "https://api.twitter.com/1.1"
-  }
+  env: {}
 };
