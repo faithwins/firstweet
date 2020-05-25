@@ -2,20 +2,33 @@
   <div class="container">
     <div>
       <logo />
-      <h1 class="title">firstweet</h1>
-      <h2 class="subtitle">Find first tweet by handle</h2>
+
+      <h2 class="subtitle">Find last tweet by handle</h2>
       <div class="handle-input">
         <span>@</span>
         <input
           type="text"
           name="handle"
           v-model="handle"
-          @keyup="search"
-          placeholder="Start typing handle"
+          @keyup.enter="search"
+          :placeholder="placeholder"
           autocomplete="off"
         />
       </div>
 
+      <transition-group name="tweeps">
+        <tweep
+          class="tweeps-item"
+          v-for="tweep in tweeps"
+          :key="tweep.id"
+          :tweep="tweep"
+          @click="retrieveTweet"
+        ></tweep>
+      </transition-group>
+
+      <transition name="slide-fade">
+        <tweet v-show="tweet != ''" :id="tweet" :key="key"></tweet>
+      </transition>
       <div class="warning">
         <em>*under construction*</em>
       </div>
@@ -26,45 +39,67 @@
 <script>
 import Logo from "~/components/Logo.vue";
 import Tweep from "~/components/Tweep.vue";
+import Tweet from "~/components/Tweet.vue";
 
 export default {
   components: {
     Logo,
-    Tweep
+    Tweep,
+    Tweet
   },
   data() {
     return {
       handle: "",
       tweeps: [],
+      tweet: "",
+      key: 0,
+      placeholder: "Put in handle here and hit Enter",
       source: this.$axios.CancelToken.source()
     };
   },
   methods: {
     async search() {
-      if (this.handle.length > 1) {
-        //if greater than 2, cancel previous call
-        if (this.handle.length > 2) {
-          this.source.cancel("request cancelled");
-        }
-        let searchUrl = `${process.env.twitter.Base_URL}/users/search.json?q=${this.handle}`;
-        this.source = this.$axios.CancelToken.source();
-        console.log(searchUrl);
-        let data = await this.$axios
-          .$get(searchUrl, {
-            cancelToken: this.source.token,
-            headers: {
-              Authorization: `OAuth oauth_consumer_key="${process.env.twitter.Consumer_Key}",oauth_token="${process.env.twitter.Access_Token}",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1590154453",oauth_nonce="q8yeiANHKaP",oauth_version="1.0",oauth_signature="8op4CK9WCR75%2Fgr5A%2BU6%2B53sYq8%3D"`
-            }
-          })
-          .catch(e => {
-            if (this.$axios.isCancel(error)) {
-              console.log("Request canceled", error);
-            } else {
-              console.log(e);
-            }
-          });
-        console.log(data);
-      }
+      this.tweet = "";
+      let apiUrl = `/api/tweeps?q=${this.handle}`;
+      this.source = this.$axios.CancelToken.source();
+      let data = await this.$axios
+        .$get(apiUrl, {
+          cancelToken: this.source.token
+        })
+        .catch(e => {
+          if (this.$axios.isCancel(error)) {
+            console.log("Request canceled", error);
+          } else {
+            console.log(e);
+          }
+        });
+      this.tweeps = data
+        .filter(u => {
+          return (
+            u.status &&
+            u.screen_name &&
+            u.screen_name.toUpperCase().startsWith(this.handle.toUpperCase())
+          );
+        })
+        .map(u => {
+          return {
+            id: u.id,
+            name: u.name,
+            screen_name: u.screen_name,
+            location: u.location,
+            description: u.description,
+            profile_image_url: u.profile_image_url,
+            verified: u.verified,
+            status: u.status.id_str
+          };
+        });
+    },
+    async retrieveTweet(tweep) {
+      this.tweeps = [];
+      this.handle = "";
+      this.placeholder = tweep.screen_name;
+      this.tweet = tweep.status;
+      this.key += 1;
     }
   }
 };
@@ -131,5 +166,48 @@ export default {
   color: coral;
   text-align: center;
   padding-top: 10px;
+}
+.tweeps {
+  padding: 10px;
+  border-radius: 5px;
+  border-top: thin solid #6589a0;
+}
+
+.tweeps-item {
+  transition: all 2s;
+  display: inline-block;
+  margin-right: 10px;
+}
+.tweeps-enter
+/* .list-complete-leave-active below version 2.1.8 */ {
+  opacity: 0;
+  transform: translateY(30px);
+}
+.tweeps-leave-to {
+  opacity: 0;
+  transform: translateY(-30px);
+}
+
+.tweeps-leave-active {
+  position: absolute;
+  transition: all 1s;
+}
+.tweet {
+  transition: all 2s;
+}
+.slide-fade-enter-active {
+  transition: all 2s ease;
+}
+.slide-fade-leave-active {
+  transition: all 2s cubic-bezier(1, 0.5, 0.8, 1);
+}
+.slide-fade-enter
+/* .slide-fade-leave-active below version 2.1.8 */ {
+  transform: translateY(-30px);
+  opacity: 0;
+}
+.slide-fade-leave-to {
+  transform: translateY(-30px);
+  opacity: 0;
 }
 </style>

@@ -14,6 +14,9 @@ export default {
         content: process.env.npm_package_description || ""
       }
     ],
+    script: [
+      { src: 'https://platform.twitter.com/widgets.js' }
+    ],
     link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" }]
   },
   /*
@@ -44,7 +47,9 @@ export default {
    ** Axios module configuration
    ** See https://axios.nuxtjs.org/options
    */
-  axios: {},
+  axios: {
+
+  },
   /*
    ** Build configuration
    */
@@ -52,7 +57,7 @@ export default {
     /*
      ** You can extend webpack config here
      */
-    extend(config, ctx) {}
+    extend(config, ctx) { }
   },
   env: {}
 };

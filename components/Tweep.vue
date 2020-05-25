@@ -1,22 +1,22 @@
 <template>
-  <div class="Tweet-header">
+  <div class="tweep" @click="clicked">
     <img
       class="Avatar"
       data-src-2x="https://pbs.twimg.com/profile_images/432081479/DOI_LOGO_bigger.jpg"
       alt
       data-src-1x="https://pbs.twimg.com/profile_images/432081479/DOI_LOGO_normal.jpg"
-      :src="profile_image_url"
+      :src="tweep.profile_image_url"
     />
     <div class="TweetAuthor js-inViewportScribingTarget">
       <div class="TweetAuthor-nameScreenNameContainer">
         <span class="TweetAuthor-decoratedName">
-          <span class="TweetAuthor-name Identity-name customisable-highlight">{name}</span>
+          <span class="TweetAuthor-name Identity-name customisable-highlight">{{tweep.name}}</span>
           <span v-show="tweep.verified" class="TweetAuthor-verifiedBadge">
             <div class="Icon Icon--verified" aria-label="Verified Account" role="img"></div>
             <b class="u-hiddenVisually">✔</b>
           </span>
         </span>
-        <span class="TweetAuthor-screenName Identity-screenName" dir="ltr">@{screen_name}</span>
+        <span class="TweetAuthor-screenName Identity-screenName" dir="ltr">@{{tweep.screen_name}}</span>
       </div>
     </div>
   </div>
@@ -29,27 +29,43 @@ export default {
       type: Object,
       required: true,
       default: {
+        id: "",
         name: "",
         screen_name: "",
         location: "",
         description: "",
         profile_image_url: "",
-        verified: false
+        verified: false,
+        status: ""
       }
+    }
+  },
+  methods: {
+    clicked() {
+      this.$emit("click", this.tweep);
     }
   }
 };
 </script>
 
 <style scoped>
-.Tweet-header {
+.tweep {
   display: -webkit-box;
   display: -webkit-flex;
   display: -moz-box;
   display: -ms-flexbox;
   display: flex;
+  padding: 10px;
+  margin: 2px;
+  border-radius: 0.5em;
+  border-color: #1da1f2;
+  cursor: pointer;
 }
-
+.tweep:hover {
+  border: thin solid #1da1f2;
+  border-radius: 0.5em;
+  cursor: pointer;
+}
 .Avatar {
   max-width: 100%;
   max-height: 100%;
@@ -122,6 +138,36 @@ img {
   padding-right: 4px;
 }
 
+.Identity-name {
+  font-weight: 700;
+}
+
+.Identity-screenName {
+  color: #697882;
+}
+
+.TweetAuthor-nameScreenNameContainer {
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+  -webkit-flex-direction: column;
+  -moz-box-orient: vertical;
+  -moz-box-direction: normal;
+  -ms-flex-direction: column;
+  flex-direction: column;
+  line-height: 1.2;
+  -webkit-box-align: start;
+  -webkit-align-items: flex-start;
+  -moz-box-align: start;
+  -ms-flex-align: start;
+  align-items: flex-start;
+  min-width: 0;
+}
+
 .TweetAuthor-screenName {
   font-size: 14px;
   overflow: hidden;
@@ -139,6 +185,14 @@ img {
   -ms-flex: none;
   flex: none;
   padding-right: 4px;
+}
+
+.Icon {
+  display: inline-block;
+  height: 1.25em;
+  background-repeat: no-repeat;
+  background-size: contain;
+  vertical-align: text-bottom;
 }
 .Icon--verified {
   width: 1.11111em;

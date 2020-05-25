@@ -1,16 +1,49 @@
 module.exports = async function (context, req) {
-    context.log('JavaScript HTTP trigger function processed a request.');
+    var rp = require("request-promise");
+    let url = req.query.q;
+    console.log('url :>> ', url);
+    if (url) {
+        let tweet = {};
+        let options = {
+            uri: `https://publish.twitter.com/oembed`,
+            //oauth: {
+            //    consumer_key: process.env.Twitter_API_Key,
+            //    consumer_secret: process.env.Twitter_API_Secret,
+            //    token: process.env.Twitter_Access_Token,
+            //    token_secret: process.env.Twitter_Token_Secret
+            //},
+            qs: { url: url },
+            json: true
+        };
+        await rp.get(options)
+            .then(function (t) {
+                console.log('t :>> ', t);
+                tweet = t;
 
-    if (req.query.name || (req.body && req.body.name)) {
-        context.res = {
-            // status: 200, /* Defaults to 200 */
-            body: "Hello " + (req.query.name || req.body.name)
+            }).catch(function (err) {
+                return {
+                    res: {
+                        status: 500,
+                        body: { message: `Error occured: ${err}` }
+                    }
+                }
+            });
+        return {
+            res: {
+                status: 200,
+                headers: {
+                    'content-type': 'application/json;charset=utf-8'
+                },
+                body: tweet
+            }
         };
     }
     else {
-        context.res = {
-            status: 400,
-            body: "Please pass a name on the query string or in the request body"
-        };
+        return {
+            res: {
+                status: 400,
+                body: { message: "Please pass encoded url of the tweet you want to retrieve" }
+            }
+        }
     }
 };
