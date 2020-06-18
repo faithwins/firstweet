@@ -57,7 +57,7 @@ export default {
       tweet: "",
       key: 0,
       loading: false,
-      placeholder: "Put in handle here and hit Enter",
+      placeholder: "updated placeholder",
       source: this.$axios.CancelToken.source()
     };
   },
