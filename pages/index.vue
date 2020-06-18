@@ -57,7 +57,7 @@ export default {
       tweet: "",
       key: 0,
       loading: false,
-      placeholder: "Put in handle here and hit Enter",
+      placeholder: "new placeholder",
       source: this.$axios.CancelToken.source()
     };
   },
@@ -65,7 +65,6 @@ export default {
     async search() {
       this.loading = true;
       this.tweet = "";
-      console.log(process.env.baseUrl);
       let apiUrl = `/api/tweeps?q=${this.handle}`;
       this.source = this.$axios.CancelToken.source();
       let data = await this.$axios
